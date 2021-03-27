@@ -29,7 +29,7 @@ router.post('/api/users', (req, res) => {
 			if (q_err)
 			{
 				console.log(q_err)
-				res.status(409).json({error: 'Email already exists'});
+				res.status(409).json({error: 'Email already exists', email: req.body.email});
 			}
 			else {
 				res.json(q_res.rows)

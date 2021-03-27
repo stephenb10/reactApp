@@ -1,7 +1,4 @@
-import { Component } from 'react';
-import { Button, Form, Navbar, Nav, NavDropdown, FormControl} from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import Signup from './signup';
 
 

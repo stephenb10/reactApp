@@ -1,12 +1,11 @@
-import { Component } from 'react';
-import { Button, Form, Navbar, Nav, NavDropdown, FormControl } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { Button, Form } from 'react-bootstrap';
+import {  useState } from 'react';
 import axios from 'axios';
-import { Formik, FormikConsumer, useFormik  } from 'formik';
+import {  useFormik  } from 'formik';
 import * as Yup from 'yup'
 
 export default function Signup({ signedUP }) {
-  const [isDuplicateEmail, setDuplicateEmailError] = useState(false);
+  const [duplicateEmails, setDuplicateEmails] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -16,7 +15,7 @@ export default function Signup({ signedUP }) {
       terms: false,
     },
     validationSchema: Yup.object({
-      email: Yup.string().email('Please provide a valid email address').required('Email is required'),
+      email: Yup.string().email('Please provide a valid email address').required('Email is required').notOneOf(duplicateEmails, "A user with this email already exists "),
       password: Yup.string().required('Password is required').matches(
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
         "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special Character"
@@ -33,7 +32,11 @@ export default function Signup({ signedUP }) {
         signedUP(res.data);
       })
       .catch((error) => {
-        console.log(JSON.stringify(error))
+        console.log(JSON.stringify(error.response, null, 2))
+
+        setDuplicateEmails(duplicateEmails.concat(error.response.data.email))
+        console.log(duplicateEmails)
+        formik.validateField('email')
       })
     }
   });
@@ -54,6 +57,12 @@ export default function Signup({ signedUP }) {
             {
             formik.errors.email
             }
+
+            {
+              formik.errors.email === "A user with this email already exists " ? <div>
+              <a href="/login">Login here</a> </div> : null
+            }
+         
           </Form.Control.Feedback>
         </Form.Group>
 
